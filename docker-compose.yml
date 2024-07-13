@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  model:
+    build:
+      context: ./model
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+    volumes:
+      - files_volume:/files
+    deploy:
+      replicas: 2
+    depends_on:
+      - redis
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - FILES_BASE_PATH=${FILES_BASE_PATH:-/files}
+    volumes:
+      - files_volume:/files
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+
+  flower:
+    image: mher/flower:2.0.0
+    command: ['celery', '--broker=${REDIS_URL:-redis://redis:6379/0}', 'flower']
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+
+volumes:
+  redis_data:
+  files_volume:

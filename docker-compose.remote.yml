@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  model:
+    build:
+      context: ./model
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS
+    volumes:
+      - files_volume:/files
+      - $GOOGLE_APPLICATION_CREDENTIALS:$GOOGLE_APPLICATION_CREDENTIALS
+    deploy:
+      replicas: 2
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - FILES_BASE_PATH=${FILES_BASE_PATH:-/files}
+      - GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS
+    volumes:
+      - files_volume:/files
+      - $GOOGLE_APPLICATION_CREDENTIALS:$GOOGLE_APPLICATION_CREDENTIALS
+    ports:
+      - "8080:8080"
+
+  flower:
+    image: mher/flower:2.0.0
+    command: ['celery', '--broker=${REDIS_URL:-redis://redis:6379/0}', 'flower']
+    ports:
+      - "5555:5555"
+
+volumes:
+  redis_data:
+  files_volume:
