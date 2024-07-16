@@ -11,19 +11,12 @@ This is done to solve a bug of `transformers` where the code cannot run without 
 ### CPU
 
 ```bash
-pip install -r requirements.txt -extra-index-url https://download.pytorch.org/whl/cpu
+pip install -r requirements.txt 
+pip install -r app/requirements.txt
+pip install -r model/requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
 ```
 
 ### GPU (TODO: add support for GPU inference)
-Torch
-
-```bash
-conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
-```
-
-```bash
-pip install -r requirements.txt
-```
 
 ## Docker
 
