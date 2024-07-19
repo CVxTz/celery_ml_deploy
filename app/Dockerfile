@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.11-slim
 
 WORKDIR "/app"
 
@@ -12,7 +12,7 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
 
 
 COPY requirements.txt ./
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 COPY run.sh run.sh
 
 COPY *.py ./

@@ -11,6 +11,13 @@ from loguru import logger
 from nicegui import run, ui
 from nicegui.events import UploadEventArguments
 
+SA = os.getenv("SA")
+if SA:
+    path = "/tmp/sa"
+    with open(path, "w") as f:
+        f.write(SA)
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = path
+
 FILES_BASE_PATH = os.getenv("FILES_BASE_PATH", "/tmp")
 
 TASK_PROMPT = "<MORE_DETAILED_CAPTION>"
@@ -94,6 +101,7 @@ async def handle_upload(
     data.image_content = f"data:{e.type};base64,{b64_bytes.decode()}"
 
     upload_reset()
+    ui.notify("Processing started. This may take 3 to 4 seconds :)", type="positive")
 
     file_extension = Path(e.name).suffix
     file_path = await run.io_bound(

@@ -15,7 +15,7 @@ def home():
                 ui.upload(
                     auto_upload=True,
                     max_files=1,
-                    max_file_size=1024 * 1024 * 4,
+                    max_file_size=1024 * 1024 * 8,
                     on_upload=lambda e: handle_upload(
                         e=e, upload_reset=upload.reset, data=page_data
                     ),
